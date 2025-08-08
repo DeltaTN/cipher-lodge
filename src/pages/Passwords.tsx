@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, } from "@/components/ui/alert-dialog";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import { MaskedPassword } from "@/components/passwords/MaskedPassword";
+import { PasswordStrength } from "@/components/passwords/PasswordStrength";
 
 export default function PasswordsPage() {
   useEffect(() => {
@@ -34,7 +36,15 @@ export default function PasswordsPage() {
       columnHelper.accessor("ipAddress", { header: "IP" }),
       columnHelper.accessor("location", { header: "Emplacement" }),
       columnHelper.accessor("username", { header: "Utilisateur" }),
-      columnHelper.accessor("password", { header: "Mot de passe" }),
+      columnHelper.accessor("password", {
+        header: "Mot de passe",
+        cell: ({ getValue }) => <MaskedPassword password={getValue() as string} />,
+      }),
+      columnHelper.display({
+        id: "strength",
+        header: "Sécurité",
+        cell: ({ row }) => <PasswordStrength password={row.original.password} />,
+      }),
       columnHelper.display({
         id: "actions",
         header: "Actions",
@@ -218,6 +228,7 @@ function AddEditDialog({ existing, open, onOpenChange }: { existing?: Equipment;
           <Input placeholder="Emplacement" value={form.location || ""} onChange={(e) => setField("location", e.target.value)} />
           <Input placeholder="Nom d'utilisateur" value={form.username || ""} onChange={(e) => setField("username", e.target.value)} />
           <Input type="password" placeholder="Mot de passe" value={form.password || ""} onChange={(e) => setField("password", e.target.value)} />
+          <PasswordStrength password={form.password || ""} />
           <div className="flex justify-end gap-2 mt-2">
             <Button variant="secondary" onClick={() => setOpenState(false)}>Annuler</Button>
             <Button onClick={doSave}>{isEdit ? "Enregistrer" : "Créer"}</Button>
