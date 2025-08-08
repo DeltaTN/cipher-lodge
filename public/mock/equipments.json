@@ -1,0 +1,38 @@
+[
+  {
+    "id": "e1",
+    "name": "Serveur Auth",
+    "description": "Serveur d'authentification",
+    "type": "serveur",
+    "ipAddress": "10.0.0.10",
+    "location": "Data Center",
+    "purchaseDate": "2022-09-12",
+    "createdAt": "2022-09-12T10:00:00.000Z",
+    "username": "admin",
+    "password": "secret123"
+  },
+  {
+    "id": "e2",
+    "name": "PC Bureau 12",
+    "description": "Poste comptabilité",
+    "type": "ordinateur",
+    "ipAddress": "10.0.2.45",
+    "location": "Etage 2",
+    "purchaseDate": "2023-03-05",
+    "createdAt": "2023-03-05T12:00:00.000Z",
+    "username": "jdupont",
+    "password": "motdepasse"
+  },
+  {
+    "id": "e3",
+    "name": "Routeur WAN",
+    "description": "Connexion principale",
+    "type": "routeur",
+    "ipAddress": "192.168.0.1",
+    "location": "Salle réseau",
+    "purchaseDate": "2021-05-15",
+    "createdAt": "2021-05-15T08:00:00.000Z",
+    "username": "root",
+    "password": "toor"
+  }
+]
