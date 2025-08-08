@@ -74,10 +74,10 @@ export default function PasswordsPage() {
             <div className="flex flex-col md:flex-row gap-2 items-stretch md:items-center justify-between">
               <div className="flex gap-2">
                 <Input placeholder="Rechercher..." value={globalFilter} onChange={(e) => setGlobalFilter(e.target.value)} />
-                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v === "all" ? "" : v)}>
                   <SelectTrigger className="w-48"><SelectValue placeholder="Filtrer par type" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tous</SelectItem>
+                    <SelectItem value="all">Tous</SelectItem>
                     <SelectItem value="ordinateur">Ordinateur</SelectItem>
                     <SelectItem value="serveur">Serveur</SelectItem>
                     <SelectItem value="routeur">Routeur</SelectItem>
