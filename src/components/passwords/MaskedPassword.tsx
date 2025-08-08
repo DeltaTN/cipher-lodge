@@ -3,21 +3,36 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useAppSelector } from "@/store";
+import { login as apiLogin } from "@/services/auth";
 
 export function MaskedPassword({ password }: { password: string }) {
   const [revealed, setRevealed] = useState(false);
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const user = useAppSelector((s) => s.auth.user);
 
   const handleReveal = () => {
+    setError(null);
+    setConfirm("");
     setOpen(true);
   };
 
-  const onConfirm = () => {
-    if (confirm === password) {
+  const onConfirm = async () => {
+    if (!user) return;
+    try {
+      setLoading(true);
+      setError(null);
+      await apiLogin(user.login, confirm);
       setRevealed(true);
       setOpen(false);
       setConfirm("");
+    } catch (e) {
+      setError("Mot de passe du compte incorrect.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,19 +52,20 @@ export function MaskedPassword({ password }: { password: string }) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirmer pour afficher</DialogTitle>
+            <DialogTitle>Confirmer votre identité</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">Pour des raisons de sécurité, retapez le mot de passe de l'équipement pour l'afficher.</p>
+            <p className="text-sm text-muted-foreground">Pour des raisons de sécurité, saisissez le mot de passe de votre compte pour afficher ce mot de passe.</p>
             <Input
               type="password"
-              placeholder="Retapez le mot de passe"
+              placeholder="Mot de passe du compte"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
             />
+            {error && <p className="text-sm text-destructive">{error}</p>}
             <div className="flex justify-end gap-2">
               <Button variant="secondary" onClick={() => setOpen(false)}>Annuler</Button>
-              <Button onClick={onConfirm} disabled={!confirm}>Confirmer</Button>
+              <Button onClick={onConfirm} disabled={!confirm || loading}>{loading ? "Vérification..." : "Confirmer"}</Button>
             </div>
           </div>
         </DialogContent>
