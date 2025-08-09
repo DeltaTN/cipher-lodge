@@ -74,6 +74,9 @@ export default function LoginPage() {
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Connexion..." : "Se connecter"}
               </Button>
+              <div className="mt-3 text-center text-sm text-muted-foreground">
+                Pas de compte ? <Link to="/register" className="story-link text-primary">Inscrivez-vous</Link>
+              </div>
             </form>
           </CardContent>
         </Card>
