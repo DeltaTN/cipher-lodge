@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { login as apiLogin } from "@/services/auth";
 
 export default function SettingsPage() {
   useEffect(() => { document.title = "Paramètres | VaultPro"; }, []);
@@ -15,11 +17,36 @@ export default function SettingsPage() {
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
   const [password, setPassword] = useState("");
+  const [verifyOpen, setVerifyOpen] = useState(false);
+  const [currentPass, setCurrentPass] = useState("");
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
 
   const save = () => {
     if (!user) return;
+    if (password) {
+      setVerifyOpen(true);
+      return;
+    }
     dispatch(updateUser({ id: user.id, firstName, lastName, login: user.login, password: password || "admin123", createdAt: user.createdAt }));
     toast.success("Profil mis à jour");
+  };
+
+  const confirmSave = async () => {
+    if (!user) return;
+    try {
+      setVerifyLoading(true);
+      setVerifyError(null);
+      await apiLogin(user.login, currentPass);
+      dispatch(updateUser({ id: user.id, firstName, lastName, login: user.login, password: password || "admin123", createdAt: user.createdAt }));
+      toast.success("Profil mis à jour");
+      setVerifyOpen(false);
+      setCurrentPass("");
+    } catch (e) {
+      setVerifyError("Mot de passe du compte incorrect.");
+    } finally {
+      setVerifyLoading(false);
+    }
   };
 
   return (
@@ -39,6 +66,27 @@ export default function SettingsPage() {
           <p className="text-sm text-muted-foreground">Configuration des formats et colonnes à exporter (à venir).</p>
         </CardContent>
       </Card>
+      <Dialog open={verifyOpen} onOpenChange={setVerifyOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmer votre identité</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">Saisissez le mot de passe de votre compte pour enregistrer les modifications sensibles.</p>
+            <Input
+              type="password"
+              placeholder="Mot de passe du compte"
+              value={currentPass}
+              onChange={(e) => setCurrentPass(e.target.value)}
+            />
+            {verifyError && <p className="text-sm text-destructive">{verifyError}</p>}
+            <div className="flex justify-end gap-2">
+              <Button variant="secondary" onClick={() => setVerifyOpen(false)}>Annuler</Button>
+              <Button onClick={confirmSave} disabled={!currentPass || verifyLoading}>{verifyLoading ? "Vérification..." : "Confirmer"}</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

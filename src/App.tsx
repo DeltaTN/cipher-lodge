@@ -11,6 +11,7 @@ import Dashboard from "@/pages/Dashboard";
 import PasswordsPage from "@/pages/Passwords";
 import UsersPage from "@/pages/Users";
 import SettingsPage from "@/pages/Settings";
+import RegisterPage from "@/pages/Register";
 import NotFound from "./pages/NotFound";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import ProtectedRoute from "@/components/common/ProtectedRoute";
